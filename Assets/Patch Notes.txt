@@ -1,0 +1,4 @@
+V1.1 -- Current Version
+- Changed backend systems to no longer running on events, rather uses cross script referencing.
+- Changed comments to reflect the changes, as well as removed legacy comment about xp calculation using -1 and 1 etc.
+- Changed the default xp being show on the ui to nothing, rather than 50XP constant.
