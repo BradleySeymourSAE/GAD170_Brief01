@@ -18,19 +18,8 @@ using UnityEngine.UI;
 /// </summary>
 public class Stats : MonoBehaviour
 {
-    /// <summary>
-    /// Our current level.
-    /// </summary>
     public int level;
-
-    /// <summary>
-    /// The current amount of xp we have accumulated.
-    /// </summary>
     public int currentXp;
-
-    /// <summary>
-    /// The amount of xp required to level up.
-    /// </summary>
     public int xpThreshold = 10;
     
     /// <summary>
@@ -65,7 +54,7 @@ public class Stats : MonoBehaviour
     [HideInInspector]
     public SFXHandler sfxHandler; // reference to our sfx Handler in our scene
     [HideInInspector]
-    public ParticleHandler particleHandler; // a refernce to our particle system that is played when we level up.  
+    public ParticleHandler particleHandler; // a reference to our particle system that is played when we level up.  
     public UIManager uIManager; // a reference to the UI Manager in our scene.
     public StatsUI statsUI; // a referecence to our stats ui for this character.
     #endregion
@@ -100,7 +89,7 @@ public class Stats : MonoBehaviour
     public void CalculateDancingStats()
     {
         Debug.LogWarning("Generate Calculate Dancing Stats has been called");
-        // what we want I want is for you to take our physical stats and translate them into our dancing stats,
+        // what we want is for you to take our physical stats and translate them into our dancing stats,
         // based on the multiplier of that stat as follows:
         // our Style should be based on our Agility.
         // our Rhythm should be based on our Strength.
@@ -111,7 +100,7 @@ public class Stats : MonoBehaviour
     }
 
     /// <summary>
-    /// This is takes in a normalised value i.e. 0.0f - 1.0f, and is used to display our % chance to win.
+    /// This takes in a normalised value i.e. 0.0f - 1.0f, and is used to display our % chance to win.
     /// </summary>
     /// <param name="normalisedValue"></param>
     public void SetPercentageValue(float normalisedValue)
@@ -129,10 +118,11 @@ public class Stats : MonoBehaviour
     /// <returns></returns>
     public int ReturnDancePowerLevel()
     {
-        // We want to design some algorithm that will generate a number of points based off of our luck,style and rythm, we probably want to add some randomness in our calculation too
-        // to ensure that there is not always a draw, by default it just returns 0. 
-        // If you right click this function and find all references you can see where it is called.
-        // Let's also throw in a little randomness in here, so it's not a garunteed win
+        // TODO: 
+        //   generate a number of points based off of our luck,style and rythm,
+        //   add some randomness in the calculation
+      
+
         Debug.LogWarning("ReturnBattlePoints has been called we probably want to create some battle points based on our stats");
         return 0;
     }
@@ -152,6 +142,11 @@ public class Stats : MonoBehaviour
         // We probably also want to check to see if the player can level up and if so do something....what should we be checking?
     }
 
+
+    // purpose of the function would be - Things to think about 
+
+
+
     /// <summary>
     /// A function used to handle actions associated with levelling up.
     /// </summary>
@@ -160,7 +155,8 @@ public class Stats : MonoBehaviour
         Debug.LogWarning("Level up has been called");
         // we probs want to increase our level....
         // As well as probably want to increase our threshold for when we should level up...based on our current new level
-        // Last thing we probably want to do is increase our physical stats...if only we had a function to do that for us.       
+        // TODO: increase our physical stats (if only we had a function to do that for us)
+            // Add a fucntion to increase physical stats     
       
         ShowLevelUpEffects(); // displays some fancy particle effects.
     }
@@ -176,9 +172,6 @@ public class Stats : MonoBehaviour
     }
 
     #region No Mods Required
-    /// <summary>
-    /// Get's all the script references required for this charactert
-    /// </summary>
     private void SetUpReferences()
     {
         animController = GetComponent<AnimationController>(); // just getting a reference to our animation component on our dancer...this is behind the scenes for the dancing to occur.
@@ -186,9 +179,7 @@ public class Stats : MonoBehaviour
         particleHandler = GetComponentInChildren<ParticleHandler>(); // searching through the child objects of this object to find the particle system.
     }
 
-    /// <summary>
-    /// If our statsUI field is not null, then we pass in a reference to ourself and update the stats.
-    /// </summary>
+
     public void UpdateStatsUI()
     {
         // this just updates our UI for our character to show new stats.
@@ -198,9 +189,6 @@ public class Stats : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Shows the level up effects whenever the character has levelled up
-    /// </summary>
     private void ShowLevelUpEffects()
     {
         // plays the level up sound effect.
