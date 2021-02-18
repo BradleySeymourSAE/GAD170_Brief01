@@ -26,7 +26,7 @@ public class Stats : MonoBehaviour
     public int level;
     public int currentXp;
     public int xpThreshold = 10;
-    int skillPointScaling = 2;
+    int skillPointScaling = 1;
 
     int previousThreshold;
     public int experienceBase = 50;
@@ -41,9 +41,9 @@ public class Stats : MonoBehaviour
     public int rhythm;
 
     // Character Attributes 
-    public int agility;
-    public int intelligence;
-    public int strength;
+    public int agility = 2;
+    public int intelligence = 1;
+    public int strength = 2;
 
     // Modifiers 
     public float agilityMultiplier = 0.5f;
@@ -256,28 +256,31 @@ public class Stats : MonoBehaviour
         // We could do an enum based approach and only assign a total amont of points each milestone? 
         // We dont want to add any points to the luck value as this would just make the game incredibly unbalanced.
 
-        int basePoints = 3;
+        int basePoints = 5;
         int intelligencePoint = 0;
-        bool s_reachedMilestone;
+        bool s_reachedMilestone = false;
 
         switch (level)
 		{
-            case 11:
-            case 33:
-            case 55:
-            case 66:
-            case 88:
+            case 10:
+            case 25:
+            case 50:
+            case 75:
             case 99:
                 s_reachedMilestone = true;
                 break;
             default:
-                s_reachedMilestone = false;
             break;
 		}
 
 
         if (s_reachedMilestone)
-            intelligencePoint = 1;
+		{
+            if (skillPointScaling == 0)
+                intelligencePoint = 1;
+            else
+                intelligencePoint += skillPointScaling;
+		}
 
         // Increase core characters stats
         // Focus on strength and the agility, and only add intelligence for each milestone 
@@ -289,25 +292,74 @@ public class Stats : MonoBehaviour
     /// <summary>
     /// A function used to assign a random amount of points ot each of our skills.
     /// </summary>
-    public void DistributePhysicalStatsOnLevelUp(int PointsPool, int _intelligencePoint)
+    public void DistributePhysicalStatsOnLevelUp(int p_PointsPool, int p_Intelligence)
     {
-        Debug.LogWarning("DistributePhysicalStatsOnLevelUp has been called " + PointsPool);
+        Debug.LogWarning("DistributePhysicalStatsOnLevelUp has been called " + p_PointsPool);
         // We need the current player's level
         int s_currentLevel = level;
+        int remainder;
 
-        if (_intelligencePoint == 1)
+        if (p_Intelligence == 1)
+            intelligence += p_Intelligence;
+
+        if (agility > strength)
+        { 
+            int _strength = Random.Range(1, p_PointsPool);
+            remainder = p_PointsPool - _strength;
+            strength += _strength;
+            agility += remainder;
+        }
+        else if (strength > agility)
 		{
-            // Add intel point 
+            int _agility = Random.Range(1, p_PointsPool);
+            remainder = p_PointsPool - _agility;
+            agility += _agility;
+            strength += remainder;
+		}
+        else
+        { 
+            if (strength == agility)
+			{
+                // If they are both the same value, then we will just randomise the points pool
+                int s_randomStrength = Random.Range(1, p_PointsPool + 1);
+                int s_randomAgility = p_PointsPool - s_randomStrength;
+                agility += s_randomAgility;
+                strength += s_randomStrength;
+			}
 		}
 
+        // Run a switch statement to check whether the player has met milestones 
+        // If the player has met them (Level 10, 25, 50, 75, 99) add an extra point or two
+        // to the player's intelligence (Which in turn gives them more luck 
 
-        // Then we need to determin how many points should be distributed on each level up
-        // and at what milestones 
+        switch (s_currentLevel)
+        { 
+            case 10:
+            case 25:
+            case 50:
+            case 75:
+            case 99:
+            if (agility < strength)
+                agility += 2;
+            if (strength < agility)
+                strength += 2;
+
+
+            // Regardless, we want to add an extra point to intelligence
+            intelligence += 1;
+            break;
+            default:
+            break;
+        }
 
 
         // After we have calculated the current players physical stats we then need to recalculate 
         // the dancing stats again - process and update the new vaues (Including the UI)
+            
+        Debug.Log("Intelligence: " + intelligence + " Agility: " + agility + " Strength: " + strength);
 
+        CalculateDancingStats(agility, strength, intelligence);
+        UpdateStatsUI();
     }
 
     #region No Modifications Required
