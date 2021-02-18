@@ -32,7 +32,7 @@ public class StatsUI : MonoBehaviour
         SetText(rhythmText, "Rhythm: " + characterStats.rhythm);
         SetText(styleText, "Style: " + characterStats.style);
         SetText(luckText, "Luck: " + characterStats.luck);
-        SetText(percentageWin, "% to win: " + characterStats.perecentageChanceToWin +"%");
+        SetText(percentageWin, "% to win: " + characterStats.percentageChanceToWin +"%");
     }
 
 

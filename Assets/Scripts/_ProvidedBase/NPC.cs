@@ -28,7 +28,8 @@ public class NPC : MonoBehaviour
     void LevelUp(int level)
     {
         Debug.Log("NPC Level Up!");
+        int intelligencePoint = 0;
         myStats.level = level;
-        myStats.DistributePhysicalStatsOnLevelUp(5);
+        myStats.DistributePhysicalStatsOnLevelUp(5, intelligencePoint);
     }
 }
