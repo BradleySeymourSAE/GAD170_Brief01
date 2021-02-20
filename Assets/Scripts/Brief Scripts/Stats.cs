@@ -69,10 +69,6 @@ public class Stats : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        agility = 2;
-        intelligence = 1;
-        strength = 3;
-
         if (level <= 0)
             level = 1;
 
@@ -89,7 +85,7 @@ public class Stats : MonoBehaviour
     /// </summary>
     public void GeneratePhysicalStatsStats()
     {
-       agility = Random.Range(1, 2);
+       agility = Random.Range(1, 4);
        strength = Random.Range(1, 4);
        intelligence = Random.Range(1, 3);
 
@@ -168,7 +164,7 @@ public class Stats : MonoBehaviour
     {
         // generate a number of points based off of our luck,style and rhythm, add randomness in calculation
         // to ensure that there is not always a draw, by default it just returns 0. 
-        int luckiness = Random.Range(2, luck);
+        int luckiness = Random.Range(1, luck);
         int number_of_attributes = 6;
         int s_currentLevel = level;
 

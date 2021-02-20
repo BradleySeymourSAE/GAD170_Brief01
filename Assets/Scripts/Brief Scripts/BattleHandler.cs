@@ -17,6 +17,8 @@ public class BattleHandler:MonoBehaviour
         Player = 1 
     }
 
+    public int lossRatio = 35;
+
     /// <summary>
     /// Returns a float of the percentage chance to win the fight based on your characters current stats.
     /// </summary>
@@ -32,19 +34,19 @@ public class BattleHandler:MonoBehaviour
             Debug.LogWarning(" Simulate battle called; but Player or NPC battle points is 0, most likely the logic has not be setup for this yet");
 
 
-        float _points = myPoints;
+        float _playerPoints = myPoints;
         float _npcPoints = opponentPoints;
-        double _percentage;
+        double winningPercentage;
 
 
-        if (_points > _npcPoints)
-            _percentage = (_npcPoints / _points) * 100f;
+        if (_playerPoints > _npcPoints)
+            winningPercentage = (_npcPoints / _playerPoints) * 100f;
         else
-            _percentage = (_points / _npcPoints) * 100f;
+            winningPercentage = (_playerPoints / _npcPoints) * 100f;
 
 
         // Debug.Log("Chance Of Winning: " + (float)Math.Round(_percentage, 2));
-        return (float)Math.Round(_percentage, 2);
+        return (float)Math.Round(winningPercentage, 2);
     }
 
 
@@ -76,7 +78,7 @@ public class BattleHandler:MonoBehaviour
         // Check to see who wins, if they win we want to give them a base xp value of baseExperience
 
         int baseXP = player.experienceBase;
-        int loserXP = baseXP - 15;
+        int loserXP = baseXP - lossRatio;
 
         int s_currentPlayerLevel = player.level;
         int s_currentNPCLevel = npc.level;
