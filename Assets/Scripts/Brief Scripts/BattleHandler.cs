@@ -83,7 +83,7 @@ public class BattleHandler:MonoBehaviour
         int s_currentPlayerLevel = player.level;
         int s_currentNPCLevel = npc.level;
 
-        // TODO: We could add the NPC's Current Level, and set the xp gained based off of the 
+        // <Bradley>: We could add the NPC's Current Level, and set the xp gained based off of the 
         // level. Vice Versa.
 
         // This could prevent OP Players and balance the game a bit 

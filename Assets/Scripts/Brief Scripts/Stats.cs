@@ -26,11 +26,11 @@ public class Stats : MonoBehaviour
     public int level;
     public int currentXp;
     public int xpThreshold = 10;
-    int skillPointScaling = 1;
+    public int skillPointScaling = 1;
 
     int previousThreshold;
     public int experienceBase = 50;
-    float levelScaling = 1.2f;
+    public float levelScaling = 1.2f;
     float levelProgress;
     float experienceStep;
 
@@ -145,13 +145,13 @@ public class Stats : MonoBehaviour
     public void SetPercentageValue(float normalisedValue)
     {
         // Set percentage to be a normalised value.
-        // See BattleHandler.cs Line 50
+        // See BattleHandler.cs Line 49
 
-        // convert value into whole number
+        // Convert normalised value into a whole number
         normalisedValue = Mathf.Round(normalisedValue);
 
         // DEBUGGING 
-        // Debug.Log("Set Percentage Value: " + normalisedValue);
+        // Debug.Log("Rounded Percentage Value: " + normalisedValue);
 
         percentageChanceToWin = normalisedValue;
         UpdateStatsUI();
