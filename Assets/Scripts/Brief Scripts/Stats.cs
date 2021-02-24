@@ -223,13 +223,6 @@ public class Stats : MonoBehaviour
         // UpdateExperienceSliderUI();
     }
 
-    private enum PointsMilestones
-	{
-      Base = 1,
-      Pro = 2,
-      Master = 3
-	}
-
     private void LevelUp(int p_CurrentXP, int p_previousThreshold)
     {
         Debug.LogWarning("Level up has been called");
