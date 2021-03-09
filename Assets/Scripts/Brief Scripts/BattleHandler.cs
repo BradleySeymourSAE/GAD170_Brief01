@@ -11,41 +11,49 @@ using UnityEngine;
 public class BattleHandler:MonoBehaviour
 {
     public SFXHandler sfxHandler; // reference to our sfx Handler to play sound effects.
-    public enum DanceStates { 
-        Draw = 0, 
-        NPC = -1, 
-        Player = 1 
-    }
-
     public int lossRatio = 35;
+    public int loserExperience;
+    public int baseExperienceGained;
+    public int playerLevel;
+    public int npcLevel;
 
     /// <summary>
     /// Returns a float of the percentage chance to win the fight based on your characters current stats.
     /// </summary>
-    /// <param name="MyStats"></param>
-    /// <param name="Opponent"></param>
+    /// <param name="CharacterStats"></param>
+    /// <param name="OpponentStats"></param>
     /// <returns></returns>
-    public float SimulateBattle(Stats MyStats, Stats Opponent)
+    public float SimulateBattle(Stats CharacterStats, Stats OpponentStats)
     {
-        int myPoints = MyStats.ReturnDancePowerLevel(); // our current powerlevel
-        int opponentPoints = Opponent.ReturnDancePowerLevel(); // our opponents current power level
-
-        if (myPoints <= 0 || opponentPoints <= 0)
-            Debug.LogWarning(" Simulate battle called; but Player or NPC battle points is 0, most likely the logic has not be setup for this yet");
-
-
-        float _playerPoints = myPoints;
-        float _npcPoints = opponentPoints;
+        int myPoints = CharacterStats.ReturnDancePowerLevel(); // our current powerlevel
+        int opponentPoints = OpponentStats.ReturnDancePowerLevel(); // our opponents current power level
         double winningPercentage;
 
+        // If my points or the opponents points are less than or equal to 0
+        if (myPoints <= 0 || opponentPoints <= 0)
+        { 
+            // Log a warning to the console.
+            Debug.LogWarning("Simulate battle called but player or the NPC's current battle points is 0");
+        }
 
-        if (_playerPoints > _npcPoints)
-            winningPercentage = (_npcPoints / _playerPoints) * 100f;
+
+        // If my current stat points are greater than the opponents stat points 
+        if (myPoints > opponentPoints)
+		{
+            // We calculate the winning percentage eg (100 / 200) * 100f; Return -> 50.00
+            winningPercentage = (float)opponentPoints / myPoints * 100f;
+		}
         else
-            winningPercentage = (_playerPoints / _npcPoints) * 100f;
+		{
+            winningPercentage = (float)myPoints / opponentPoints * 100f;
+		}
 
 
-        // Debug.Log("Chance Of Winning: " + (float)Math.Round(_percentage, 2));
+        // Debugging 
+        Debug.Log("[SimulateBattle]: " + "Calculate winning percentage: " + winningPercentage);
+        Debug.Log("[SimulateBattle]: " + "Chance of winning: " + (float)Math.Round(winningPercentage, 2));
+
+        // Return the float to 2 decimal places.
         return (float)Math.Round(winningPercentage, 2);
     }
 
@@ -58,74 +66,94 @@ public class BattleHandler:MonoBehaviour
     /// <param name="player"></param>
     /// <param name="npc"></param>
     public void Battle(Stats player, Stats npc)
-    {     
+    {
+        baseExperienceGained = player.experienceBase; // base experience value to be gained for defeating opponent.
+        loserExperience = baseExperienceGained - lossRatio; // loser experience 
+        playerLevel = player.level; // the current players level 
+        npcLevel = npc.level; // the current npc level 
+
+        // Local Variables 
         int playerPowerLevel = player.ReturnDancePowerLevel(); // player powerlevel
         int npcPowerLevel = npc.ReturnDancePowerLevel(); // npc powerlevel
         int winner = 0;
 
         if (playerPowerLevel <= 0 || npcPowerLevel <= 0)
-            Debug.LogWarning("Player or NPC battle points is 0 - Has the logic been setup yet?");
+        { 
+            Debug.LogWarning("Something went wrong in BattleHandler.Battle - Player or NPC battle points is equal to 0");
+        }
 
-
-        if (playerPowerLevel == npcPowerLevel)
-            winner = (int)DanceStates.Draw;
-        else if (playerPowerLevel > npcPowerLevel)
-            winner = (int)DanceStates.Player;
+        // Check if the players power level is greater than the npc's power level 
+        if (playerPowerLevel > npcPowerLevel)
+		{
+            // PLAYER WINS 
+            Debug.Log("[Battle]: " + "PLAYER HAS WON THE BATTLE!");
+            winner = 1;
+		}
+        // If players power level is less than the npc's power level 
+        else if (playerPowerLevel < npcPowerLevel)
+		{
+            // NPC WINS 
+            Debug.Log("[Battle]: " + "NPC HAS WON THE BATTLE!");
+            winner = -1;
+		}
         else
-            if (playerPowerLevel < npcPowerLevel)
-            winner = (int)DanceStates.NPC;
+		{
+            // If the players power level is the same as the npc's power level 
+            if (playerPowerLevel == npcPowerLevel)
+			{
+                // Its a draw!
+                Debug.Log("[Battle]: " + "PLAYER & NPC DRAWED!");
+                winner = 0;
+			}
+		}
 
-        // Check to see who wins, if they win we want to give them a base xp value of baseExperience
-
-        int baseXP = player.experienceBase;
-        int loserXP = baseXP - lossRatio;
-
-        int s_currentPlayerLevel = player.level;
-        int s_currentNPCLevel = npc.level;
 
         // <Bradley>: We could add the NPC's Current Level, and set the xp gained based off of the 
         // level. Vice Versa.
 
         // This could prevent OP Players and balance the game a bit 
-        switch (winner)
-        {
-            case 0:
-                // If there was a draw
-                // We can assign the base xp to both, and add the other players level 
-                
-                int s_playerXP = baseXP + (s_currentNPCLevel * 2);
-                int s_npcXP = baseXP + (s_currentPlayerLevel * 2);
 
+        if (winner == 0)
+		{
+           baseExperienceGained = baseExperienceGained + (npcLevel + 2);
 
-                player.AddXP(s_playerXP);
-                npc.AddXP(s_npcXP);
-                break;
-            case 1:
+            Debug.Log("Adding Experience " + baseExperienceGained + " to PLAYER AND NPC for drawing in the fight!");
+            player.AddXP(baseExperienceGained);
+           npc.AddXP(baseExperienceGained);
+		}
+        else if (winner == 1)
+		{
+            // Player won the battle.
 
-                // If the player wins 
-                baseXP = baseXP + 15 + (s_currentNPCLevel * 2);
+            // Calculate base experience + (NPC Current Level * 2);
+            baseExperienceGained = baseExperienceGained + 15 + (npcLevel * 2);
 
-                player.AddXP(baseXP);
-                npc.AddXP(loserXP);
-                break;
-            case -1:
-                // If the NPC Wins
-                baseXP = baseXP + 15 + (s_currentPlayerLevel * 2);
+            Debug.Log("Adding Experience " + baseExperienceGained + " to PLAYER for winning the battle! Adding Experience " + loserExperience + " to the NPC for losing the battle!");
+            // Add experience to player for winning 
+            player.AddXP(baseExperienceGained);
+            // Add loser experience to npc 
+            npc.AddXP(loserExperience);
+		}
+        else
+		{
+            if (winner == -1)
+			{
+                // NPC Won the battle 
+                baseExperienceGained = baseExperienceGained + (playerLevel);
 
-                player.AddXP(loserXP);
-                npc.AddXP(baseXP);
-                break;
-            default:
-                Debug.LogWarning("Error in BattleHandler.." + winner);
-                break;
-        }
+                Debug.Log("Adding Experience " + baseExperienceGained + " to the NPC for winning the battle! Adding Experience " + loserExperience + " to the PLAYER for losing the battle!");
+                player.AddXP(loserExperience);
+                npc.AddXP(baseExperienceGained);
+            }
+            // If there should be an else here, something clearly went wrong lol.
+		}
 
-        // We need to set the winner to a float type before parsing it to 
-        // SetWinningEffects() as it takes the param as a float - NOT Integer.
-
-        float _winnerResult = winner;
-
-        SetWinningEffects(player, npc, _winnerResult);
+      
+        Debug.Log("[Battle]: " + "Battle has completed and we have a winner! Calling SetWinningEffects...");
+        // Update Winning Effects UI to display changes accordingly
+		// This function takes the variable 'battleResult' as a float
+        // Casted the winner result from a integer.
+        SetWinningEffects(player, npc, (float)winner);
     }
 
     #region No Modifications Required Section
